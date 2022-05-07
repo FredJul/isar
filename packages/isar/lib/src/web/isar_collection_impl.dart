@@ -93,7 +93,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   Future<int> put(
     OBJ object, {
     bool replaceOnConflict = false,
-    bool saveLinks = false,
+    bool saveLinks = true,
   }) {
     return isar.getTxn(true, (txn) async {
       final serialized = schema.serializeWeb(this, object);
@@ -123,7 +123,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   Future<List<int>> putAll(
     List<OBJ> objects, {
     bool replaceOnConflict = false,
-    bool saveLinks = false,
+    bool saveLinks = true,
   }) {
     return isar.getTxn(true, (txn) async {
       final serialized = [];
@@ -161,7 +161,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   int putSync(
     OBJ object, {
     bool replaceOnConflict = false,
-    bool saveLinks = false,
+    bool saveLinks = true,
   }) =>
       unsupportedOnWeb();
 
@@ -169,7 +169,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   List<int> putAllSync(
     List<OBJ> objects, {
     bool replaceOnConflict = false,
-    bool saveLinks = false,
+    bool saveLinks = true,
   }) =>
       unsupportedOnWeb();
 
