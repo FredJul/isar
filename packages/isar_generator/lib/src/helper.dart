@@ -32,14 +32,7 @@ extension ClassElementX on ClassElement {
   }
 
   List<PropertyInducingElement> get allAccessors {
-    return [
-      ...accessors.mapNotNull((e) => e.variable),
-      if (collectionAnnotation!.inheritance)
-        for (var supertype in allSupertypes) ...[
-          if (!supertype.isDartCoreObject)
-            ...supertype.accessors.mapNotNull((e) => e.variable)
-        ]
-    ]
+    return accessors.mapNotNull((e) => e.variable)
         .where(
           (e) =>
               e.isPublic &&
