@@ -280,7 +280,9 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
 
     if (saveLinks) {
       for (final link in schema.getLinks(object)) {
-        link.saveSync();
+          if (link.isChanged) {
+            link.saveSync();
+          }
       }
     }
 
@@ -288,8 +290,8 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   }
 
   @override
-  Future<List<int>> putAll(List<OBJ> objects) {
-    return putAllByIndex(null, objects);
+  Future<List<int>> putAll(List<OBJ> objects, {bool saveLinks = true}) {
+    return putAllByIndex(null, objects, saveLinks: saveLinks);
   }
 
   @override
@@ -298,7 +300,11 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   }
 
   @override
-  Future<List<int>> putAllByIndex(String? indexName, List<OBJ> objects) {
+  Future<List<int>> putAllByIndex(
+    String? indexName,
+    List<OBJ> objects, {
+    bool saveLinks = true,
+  }) {
     final indexId = indexName != null ? schema.index(indexName).id : null;
 
     return isar.getTxn(true, (Txn txn) async {
@@ -314,6 +320,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
       await txn.wait();
       final cObjectSet = cObjSetPtr.ref;
       final ids = List<int>.filled(objects.length, 0);
+      final linkFutures = <Future<void>>[];
       for (var i = 0; i < objects.length; i++) {
         final cObjPtr = cObjectSet.objects.elementAt(i);
         final id = cObjPtr.ref.id;
@@ -321,6 +328,18 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
 
         final object = objects[i];
         schema.attach(this, id, object);
+
+        if (saveLinks) {
+          for (final link in schema.getLinks(object)) {
+            if (link.isChanged) {
+              linkFutures.add(link.save());
+            }
+          }
+        }
+      }
+      
+      if (linkFutures.isNotEmpty) {
+        await Future.wait(linkFutures);
       }
       return ids;
     });
