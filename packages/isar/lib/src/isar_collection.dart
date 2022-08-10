@@ -54,8 +54,11 @@ abstract class IsarCollection<OBJ> {
   List<OBJ?> getAllByIndexSync(String indexName, List<IndexKey> keys);
 
   /// Insert or update an [object] and returns the assigned id.
-  Future<Id> put(OBJ object) {
-    return putAll([object]).then((List<Id> ids) => ids[0]);
+  Future<Id> put(OBJ object, {bool saveLinks = true}) {
+    return putAll(
+      [object],
+      saveLinks: saveLinks,
+    ).then((List<Id> ids) => ids[0]);
   }
 
   /// Insert or update an [object] and returns the assigned id.
@@ -64,26 +67,38 @@ abstract class IsarCollection<OBJ> {
   }
 
   /// Insert or update a list of [objects] and returns the list of assigned ids.
-  Future<List<Id>> putAll(List<OBJ> objects);
+  Future<List<Id>> putAll(List<OBJ> objects, {bool saveLinks = true});
 
   /// Insert or update a list of [objects] and returns the list of assigned ids.
   List<Id> putAllSync(List<OBJ> objects, {bool saveLinks = true});
 
   /// @nodoc
   @protected
-  Future<Id> putByIndex(String indexName, OBJ object) {
-    return putAllByIndex(indexName, [object]).then((List<Id> ids) => ids[0]);
+  Future<Id> putByIndex(
+    String indexName,
+    OBJ object, {
+    bool saveLinks = true,
+  }) {
+    return putAllByIndex(
+      indexName,
+      [object],
+      saveLinks: saveLinks,
+    ).then((List<Id> ids) => ids[0]);
   }
 
   /// @nodoc
   @protected
   Id putByIndexSync(String indexName, OBJ object, {bool saveLinks = true}) {
-    return putAllByIndexSync(indexName, [object])[0];
+    return putAllByIndexSync(indexName, [object], saveLinks: saveLinks)[0];
   }
 
   /// @nodoc
   @protected
-  Future<List<Id>> putAllByIndex(String indexName, List<OBJ> objects);
+  Future<List<Id>> putAllByIndex(
+    String indexName,
+    List<OBJ> objects, {
+    bool saveLinks = true,
+  });
 
   /// @nodoc
   @protected
