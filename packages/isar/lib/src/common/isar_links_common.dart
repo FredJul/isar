@@ -101,9 +101,9 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
 
   void _computeAllObjectsSet() {
     _savedAddedRemovedObjects..clear()
-    ..addAll(_loadedObjects.values)
-    ..removeAll(removedObjects)
-    ..addAll(addedObjects);
+      ..addAll(_loadedObjects.values)
+      ..removeAll(removedObjects)
+      ..addAll(addedObjects);
   }
 
   @override
@@ -156,9 +156,12 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
         }
         _savedObjects[id] = value;
       }
+
+      removedObjects.removeWhere((obj) => getId(obj) == id);
+    } else {
+      removedObjects.remove(value);
     }
 
-    removedObjects.remove(value);
     final added = addedObjects.add(value);
     if (added) {
       _computeAllObjectsSet();
