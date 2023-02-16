@@ -135,15 +135,22 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
   @override
   Future<void> reset() async {
     await update(reset: true);
-    clear();
+    _reset();
     isLoaded = true;
   }
 
   @override
   void resetSync() {
     updateSync(reset: true);
-    clear();
+    _reset();
     isLoaded = true;
+  }
+
+  void _reset() {
+    _savedObjects.clear();
+    addedObjects.clear();
+    removedObjects.clear();
+    _savedAddedRemovedObjects.clear();
   }
 
   @override
@@ -210,10 +217,11 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
 
   @override
   void clear() {
-    _allObjects.clear();
-    _savedObjects.clear();
     addedObjects.clear();
     removedObjects.clear();
+    removedObjects.addAll(_loadedObjects.values);
+    _savedObjects.clear();
+    _savedAddedRemovedObjects.clear();
   }
 
   @override
